@@ -1,6 +1,13 @@
 import { Filter, ObjectId } from "mongodb";
 import { getDb } from "./mongo";
 
+export type StoatFileRef = {
+  _id?: string;
+  tag?: string;
+  filename?: string;
+  content_type?: string;
+};
+
 export type StoatUser = {
   _id: string;
   username?: string;
@@ -11,15 +18,21 @@ export type StoatUser = {
   privileged?: boolean;
   bot?: { owner?: string };
   relationship?: string;
+  relations?: { _id: string; status?: string }[];
   status?: { text?: string; presence?: string };
-  avatar?: { _id?: string };
+  avatar?: StoatFileRef;
 };
 
 export type StoatAccount = {
   _id: string;
   email?: string;
+  email_normalised?: string;
   disabled?: boolean;
   deletion?: unknown;
+  lockout?: unknown;
+  verification?: unknown;
+  mfa?: unknown;
+  password?: string;
 };
 
 export type StoatServer = {
@@ -30,7 +43,73 @@ export type StoatServer = {
   channels?: string[];
   flags?: number;
   nsfw?: boolean;
-  icon?: { _id?: string };
+  discoverable?: boolean;
+  icon?: StoatFileRef;
+  banner?: StoatFileRef;
+  system_messages?: Record<string, string | null | undefined>;
+  default_permissions?: unknown;
+  categories?: unknown;
+  roles?: unknown;
+};
+
+export type StoatChannel = {
+  _id: string;
+  channel_type?: string;
+  name?: string;
+  description?: string;
+  server?: string;
+  owner?: string;
+  user?: string;
+  recipients?: string[];
+  last_message_id?: string;
+  nsfw?: boolean;
+  active?: boolean;
+  slowmode?: number;
+  icon?: StoatFileRef;
+  permissions?: number;
+  default_permissions?: unknown;
+  role_permissions?: unknown;
+  voice?: unknown;
+};
+
+export type StoatMessage = {
+  _id: string;
+  channel?: string;
+  author?: string;
+  content?: string | null;
+  nonce?: string;
+  attachments?: unknown[];
+  embeds?: unknown[];
+  mentions?: string[];
+  replies?: string[];
+  reactions?: unknown;
+  edited?: unknown;
+  pinned?: boolean;
+  flags?: number;
+  system?: unknown;
+  masquerade?: unknown;
+};
+
+export type StoatBot = {
+  _id: string;
+  owner?: string;
+  token?: string;
+  public?: boolean;
+  analytics?: boolean;
+  discoverable?: boolean;
+  interactions_url?: string;
+  terms_of_service_url?: string;
+  privacy_policy_url?: string;
+  flags?: number;
+};
+
+export type StoatInvite = {
+  _id: string;
+  type?: string;
+  server?: string;
+  creator?: string;
+  channel?: string;
+  member_count?: number;
 };
 
 export type DashboardStats = {
@@ -167,14 +246,36 @@ export async function getServer(id: string): Promise<{
 }
 
 export type InspectResult =
-  | { kind: "user"; user: StoatUser; account: StoatAccount | null }
-  | { kind: "server"; server: StoatServer }
-  | { kind: "channel"; channel: Record<string, unknown> }
-  | { kind: "message"; message: Record<string, unknown> }
-  | { kind: "bot"; bot: Record<string, unknown> }
+  | {
+      kind: "user";
+      user: StoatUser;
+      account: StoatAccount | null;
+      memberOf: number;
+    }
+  | { kind: "server"; server: StoatServer; memberCount: number; owner: StoatUser | null }
+  | { kind: "channel"; channel: StoatChannel; serverName: string | null }
+  | { kind: "message"; message: StoatMessage; author: StoatUser | null }
+  | { kind: "bot"; bot: StoatBot; owner: StoatUser | null }
+  | {
+      kind: "invite";
+      invite: StoatInvite;
+      creator: StoatUser | null;
+      serverName: string | null;
+    }
   | { kind: "none" };
 
 type UlidDoc = { _id: string };
+
+async function findInvite(
+  id: string,
+): Promise<StoatInvite | null> {
+  const db = await getDb();
+  for (const name of ["channel_invites", "invites"] as const) {
+    const doc = await db.collection<StoatInvite>(name).findOne({ _id: id });
+    if (doc) return doc;
+  }
+  return null;
+}
 
 export async function inspectId(id: string): Promise<InspectResult> {
   const trimmed = id.trim();
@@ -185,26 +286,68 @@ export async function inspectId(id: string): Promise<InspectResult> {
 
   const user = await db.collection<StoatUser>("users").findOne(byId);
   if (user) {
-    const account = await db.collection<StoatAccount>("accounts").findOne(byId);
-    return { kind: "user", user, account };
+    const [account, memberOf] = await Promise.all([
+      db.collection<StoatAccount>("accounts").findOne(byId),
+      db.collection("server_members").countDocuments({ "_id.user": trimmed }),
+    ]);
+    return { kind: "user", user, account, memberOf };
   }
 
   const server = await db.collection<StoatServer>("servers").findOne(byId);
-  if (server) return { kind: "server", server };
+  if (server) {
+    const [memberCount, owner] = await Promise.all([
+      db.collection("server_members").countDocuments({ "_id.server": trimmed }),
+      server.owner
+        ? db.collection<StoatUser>("users").findOne({ _id: server.owner })
+        : Promise.resolve(null),
+    ]);
+    return { kind: "server", server, memberCount, owner };
+  }
 
-  const channel = await db.collection<UlidDoc>("channels").findOne(byId);
+  const channel = await db.collection<StoatChannel>("channels").findOne(byId);
   if (channel) {
-    return { kind: "channel", channel: channel as unknown as Record<string, unknown> };
+    const serverDoc = channel.server
+      ? await db.collection<StoatServer>("servers").findOne({ _id: channel.server })
+      : null;
+    return {
+      kind: "channel",
+      channel,
+      serverName: serverDoc?.name ?? null,
+    };
   }
 
-  const message = await db.collection<UlidDoc>("messages").findOne(byId);
+  const message = await db.collection<StoatMessage>("messages").findOne(byId);
   if (message) {
-    return { kind: "message", message: message as unknown as Record<string, unknown> };
+    const author = message.author
+      ? await db.collection<StoatUser>("users").findOne({ _id: message.author })
+      : null;
+    return { kind: "message", message, author };
   }
 
-  const bot = await db.collection<UlidDoc>("bots").findOne(byId);
+  const bot = await db.collection<StoatBot>("bots").findOne(byId);
   if (bot) {
-    return { kind: "bot", bot: bot as unknown as Record<string, unknown> };
+    const owner = bot.owner
+      ? await db.collection<StoatUser>("users").findOne({ _id: bot.owner })
+      : null;
+    return { kind: "bot", bot, owner };
+  }
+
+  const invite = await findInvite(trimmed);
+  if (invite) {
+    const [creator, serverDoc] = await Promise.all([
+      invite.creator
+        ? db.collection<StoatUser>("users").findOne({ _id: invite.creator })
+        : Promise.resolve(null),
+      invite.server
+        ? db.collection<StoatServer>("servers").findOne({ _id: invite.server })
+        : Promise.resolve(null),
+    ]);
+    return {
+      kind: "invite",
+      invite,
+      creator,
+      serverName: serverDoc?.name ?? null,
+    };
   }
 
   if (ObjectId.isValid(trimmed)) {
