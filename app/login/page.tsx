@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { auth, signIn } from "@/lib/auth";
 
@@ -15,6 +16,17 @@ export default async function LoginPage({
 
   return (
     <main className="login-shell relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+      <div className="login-hero" aria-hidden>
+        <Image
+          src="/admin-hero.jpg"
+          alt=""
+          fill
+          priority
+          className="login-hero-img object-cover object-center"
+          sizes="100vw"
+        />
+        <div className="login-hero-scrim" />
+      </div>
       <div className="login-orb login-orb-a" aria-hidden />
       <div className="login-orb login-orb-b" aria-hidden />
 

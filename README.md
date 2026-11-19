@@ -1,5 +1,7 @@
 # Stoat Admin
 
+![Stoat Admin](./public/admin-hero.jpg)
+
 Self-hosted admin panel for a [Stoat](https://stoat.chat) / Revolt instance.
 
 Built for the [stoat-operator](https://github.com/DataKnifeAI/stoat-operator): Authentik SSO, dedicated Ingress, and direct MongoDB access to the `revolt` database.
