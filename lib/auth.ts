@@ -5,17 +5,23 @@ import NextAuth from "next-auth";
  * compatible with the operator docs / existing Authentik redirect URI:
  *   https://<admin.domain>/api/auth/callback/authentik
  *
- * Env (operator stoat-admin-env):
- *   AUTHENTIK_ID, AUTHENTIK_SECRET, AUTHENTIK_ISSUER
- *   NEXTAUTH_URL, NEXTAUTH_SECRET
+ * Authentik's discovery `issuer` always ends with `/`. openid-client requires
+ * an exact match, so we normalize to a trailing slash even if the operator
+ * secret was trimmed.
  */
+function authentikIssuer(): string | undefined {
+  const raw = process.env.AUTHENTIK_ISSUER?.trim();
+  if (!raw) return undefined;
+  return raw.endsWith("/") ? raw : `${raw}/`;
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     {
       id: "authentik",
       name: "Authentik",
       type: "oidc",
-      issuer: process.env.AUTHENTIK_ISSUER?.replace(/\/+$/, ""),
+      issuer: authentikIssuer(),
       clientId: process.env.AUTHENTIK_ID,
       clientSecret: process.env.AUTHENTIK_SECRET,
       style: { brandColor: "#fd4b2d" },
@@ -25,6 +31,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   pages: {
     signIn: "/login",
+    error: "/login",
   },
   callbacks: {
     authorized({ auth: session }) {
@@ -34,7 +41,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (profile) {
         token.email = profile.email ?? token.email;
         token.name = profile.name ?? token.name;
-        // Prefer preferred_username from Authentik when present.
         const p = profile as Record<string, unknown>;
         if (typeof p.preferred_username === "string") {
           token.name = p.preferred_username;
