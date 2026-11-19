@@ -20,12 +20,12 @@ export function Sidebar({
   const pathname = usePathname() || "/panel";
 
   return (
-    <aside className="flex w-56 shrink-0 flex-col border-r border-zinc-200 bg-zinc-50">
-      <div className="border-b border-zinc-200 px-4 py-5">
-        <div className="text-xs font-semibold uppercase tracking-[0.18em] text-orange-700">
+    <aside className="flex w-56 shrink-0 flex-col border-r border-white/10 bg-stoat-raised">
+      <div className="border-b border-white/10 px-4 py-5">
+        <div className="text-xs font-semibold uppercase tracking-[0.18em] text-stoat-cyan">
           Stoat
         </div>
-        <div className="mt-1 text-lg font-semibold text-zinc-900">Admin</div>
+        <div className="mt-1 text-lg font-semibold text-stoat-text">Admin</div>
       </div>
       <nav className="flex flex-1 flex-col gap-0.5 p-2">
         {links.map((l) => {
@@ -39,8 +39,8 @@ export function Sidebar({
               href={l.href}
               className={
                 active
-                  ? "rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white"
-                  : "rounded-md px-3 py-2 text-sm text-zinc-700 hover:bg-zinc-200/70"
+                  ? "rounded-md bg-stoat-cyan px-3 py-2 text-sm font-medium text-stoat-slate"
+                  : "rounded-md px-3 py-2 text-sm text-stoat-muted hover:bg-white/5 hover:text-stoat-text"
               }
             >
               {l.label}
@@ -48,12 +48,12 @@ export function Sidebar({
           );
         })}
       </nav>
-      <div className="border-t border-zinc-200 p-3">
-        <div className="truncate text-xs text-zinc-500">{userLabel}</div>
+      <div className="border-t border-white/10 p-3">
+        <div className="truncate text-xs text-stoat-muted">{userLabel}</div>
         <form action={signOutAction} className="mt-2">
           <button
             type="submit"
-            className="text-xs font-medium text-zinc-700 underline-offset-2 hover:underline"
+            className="text-xs font-medium text-stoat-cyan underline-offset-2 hover:underline"
           >
             Sign out
           </button>

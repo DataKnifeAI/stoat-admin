@@ -1,13 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4f4f5;
-  --foreground: #18181b;
+  /* Stoat brand — https://stoat-colours.pages.dev / theme-color */
+  --stoat-cyan: #00d8ff;
+  --stoat-cyan-dark: #003e49;
+  --stoat-teal: #00ffd8;
+  --stoat-teal-dark: #00493e;
+  --stoat-slate: #2a233a;
+  --stoat-slate-raised: #342b48;
+  --stoat-slate-panel: #312843;
+  --stoat-text: #f4f2f7;
+  --stoat-muted: #a89bb8;
+  --background: var(--stoat-slate);
+  --foreground: var(--stoat-text);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-stoat-cyan: var(--stoat-cyan);
+  --color-stoat-cyan-dark: var(--stoat-cyan-dark);
+  --color-stoat-teal: var(--stoat-teal);
+  --color-stoat-slate: var(--stoat-slate);
+  --color-stoat-raised: var(--stoat-slate-raised);
+  --color-stoat-panel: var(--stoat-slate-panel);
+  --color-stoat-text: var(--stoat-text);
+  --color-stoat-muted: var(--stoat-muted);
   --font-sans: var(--font-ibm-plex);
   --font-mono: var(--font-ibm-plex-mono);
 }
@@ -18,12 +36,12 @@ body {
   font-family: var(--font-ibm-plex), "IBM Plex Sans", ui-sans-serif, sans-serif;
 }
 
-/* Login: ambient field + staged entrance */
+/* Login: ambient cyan field + staged entrance */
 .login-shell {
   background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, #ffedd5 0%, transparent 55%),
-    radial-gradient(ellipse 60% 40% at 100% 100%, #e4e4e7 0%, transparent 50%),
-    #f4f4f5;
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgb(0 216 255 / 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgb(0 255 216 / 0.1) 0%, transparent 50%),
+    var(--stoat-slate);
 }
 
 .login-orb {
@@ -31,7 +49,7 @@ body {
   position: absolute;
   border-radius: 9999px;
   filter: blur(48px);
-  opacity: 0.55;
+  opacity: 0.45;
   animation: login-drift 14s ease-in-out infinite alternate;
 }
 
@@ -40,7 +58,7 @@ body {
   left: 8%;
   width: 18rem;
   height: 18rem;
-  background: #fdba74;
+  background: var(--stoat-cyan);
 }
 
 .login-orb-b {
@@ -48,7 +66,7 @@ body {
   bottom: 10%;
   width: 22rem;
   height: 22rem;
-  background: #d4d4d8;
+  background: var(--stoat-teal);
   animation-delay: -6s;
   animation-duration: 18s;
 }
@@ -96,11 +114,11 @@ body {
 @keyframes login-pulse {
   0%,
   100% {
-    box-shadow: 0 12px 28px -12px rgb(154 52 18 / 0.35);
+    box-shadow: 0 12px 28px -12px rgb(0 216 255 / 0.45);
     transform: scale(1);
   }
   50% {
-    box-shadow: 0 16px 36px -10px rgb(234 88 12 / 0.45);
+    box-shadow: 0 16px 36px -10px rgb(0 255 216 / 0.55);
     transform: scale(1.03);
   }
 }

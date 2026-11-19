@@ -14,11 +14,11 @@ export function SearchForm({
         name="q"
         defaultValue={defaultValue}
         placeholder={placeholder}
-        className="min-w-0 flex-1 rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none ring-orange-600/30 placeholder:text-zinc-400 focus:ring-2"
+        className="min-w-0 flex-1 rounded-md border border-white/15 bg-stoat-panel px-3 py-2 text-sm text-stoat-text outline-none ring-stoat-cyan/30 placeholder:text-stoat-muted focus:ring-2"
       />
       <button
         type="submit"
-        className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+        className="rounded-md bg-stoat-cyan px-4 py-2 text-sm font-medium text-stoat-slate hover:brightness-110"
       >
         Search
       </button>

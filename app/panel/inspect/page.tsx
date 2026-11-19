@@ -18,8 +18,8 @@ export default async function InspectPage({
     <div className="space-y-6">
       <header className="space-y-3">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-900">Inspect ID</h1>
-          <p className="mt-1 text-sm text-zinc-600">
+          <h1 className="text-2xl font-semibold text-stoat-text">Inspect ID</h1>
+          <p className="mt-1 text-sm text-stoat-muted">
             Look up a Stoat ULID across users, servers, channels, messages, and
             bots.
           </p>
@@ -32,18 +32,18 @@ export default async function InspectPage({
       </header>
 
       {!q?.trim() ? null : result?.kind === "none" ? (
-        <p className="rounded-lg border border-zinc-200 bg-white px-4 py-6 text-sm text-zinc-600">
+        <p className="rounded-lg border border-white/10 bg-stoat-panel px-4 py-6 text-sm text-stoat-muted">
           No document found for <span className="font-mono">{q.trim()}</span>.
         </p>
       ) : result?.kind === "user" ? (
         <section className="space-y-3">
-          <div className="rounded-lg border border-zinc-200 bg-white p-4">
-            <div className="text-xs uppercase tracking-wide text-zinc-500">
+          <div className="rounded-lg border border-white/10 bg-stoat-panel p-4">
+            <div className="text-xs uppercase tracking-wide text-stoat-muted">
               User
             </div>
             <Link
               href={`/panel/users/${result.user._id}`}
-              className="mt-1 inline-block text-lg font-semibold text-zinc-900 hover:underline"
+              className="mt-1 inline-block text-lg font-semibold text-stoat-text hover:underline"
             >
               {fmtUser(result.user)}
             </Link>
@@ -52,13 +52,13 @@ export default async function InspectPage({
         </section>
       ) : result?.kind === "server" ? (
         <section className="space-y-3">
-          <div className="rounded-lg border border-zinc-200 bg-white p-4">
-            <div className="text-xs uppercase tracking-wide text-zinc-500">
+          <div className="rounded-lg border border-white/10 bg-stoat-panel p-4">
+            <div className="text-xs uppercase tracking-wide text-stoat-muted">
               Server
             </div>
             <Link
               href={`/panel/servers/${result.server._id}`}
-              className="mt-1 inline-block text-lg font-semibold text-zinc-900 hover:underline"
+              className="mt-1 inline-block text-lg font-semibold text-stoat-text hover:underline"
             >
               {result.server.name || "(unnamed)"}
             </Link>
@@ -67,8 +67,8 @@ export default async function InspectPage({
         </section>
       ) : result ? (
         <section className="space-y-3">
-          <div className="rounded-lg border border-zinc-200 bg-white p-4">
-            <div className="text-xs uppercase tracking-wide text-zinc-500">
+          <div className="rounded-lg border border-white/10 bg-stoat-panel p-4">
+            <div className="text-xs uppercase tracking-wide text-stoat-muted">
               {result.kind}
             </div>
           </div>

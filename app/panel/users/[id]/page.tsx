@@ -18,45 +18,45 @@ export default async function UserDetailPage({
   return (
     <div className="space-y-6">
       <div>
-        <Link href="/panel/users" className="text-sm text-zinc-500 hover:underline">
+        <Link href="/panel/users" className="text-sm text-stoat-muted hover:underline">
           ← Users
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold text-zinc-900">
+        <h1 className="mt-2 text-2xl font-semibold text-stoat-text">
           {fmtUser(user)}
         </h1>
-        <p className="mt-1 font-mono text-xs text-zinc-500">{user._id}</p>
+        <p className="mt-1 font-mono text-xs text-stoat-muted">{user._id}</p>
       </div>
 
       <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-lg border border-zinc-200 bg-white p-4">
-          <dt className="text-xs uppercase tracking-wide text-zinc-500">Email</dt>
-          <dd className="mt-1 text-sm text-zinc-900">
+        <div className="rounded-lg border border-white/10 bg-stoat-panel p-4">
+          <dt className="text-xs uppercase tracking-wide text-stoat-muted">Email</dt>
+          <dd className="mt-1 text-sm text-stoat-text">
             {account?.email ?? "—"}
           </dd>
         </div>
-        <div className="rounded-lg border border-zinc-200 bg-white p-4">
-          <dt className="text-xs uppercase tracking-wide text-zinc-500">
+        <div className="rounded-lg border border-white/10 bg-stoat-panel p-4">
+          <dt className="text-xs uppercase tracking-wide text-stoat-muted">
             Account disabled
           </dt>
-          <dd className="mt-1 text-sm text-zinc-900">
+          <dd className="mt-1 text-sm text-stoat-text">
             {account?.disabled ? "yes" : "no"}
           </dd>
         </div>
-        <div className="rounded-lg border border-zinc-200 bg-white p-4">
-          <dt className="text-xs uppercase tracking-wide text-zinc-500">
+        <div className="rounded-lg border border-white/10 bg-stoat-panel p-4">
+          <dt className="text-xs uppercase tracking-wide text-stoat-muted">
             Server memberships
           </dt>
-          <dd className="mt-1 text-sm tabular-nums text-zinc-900">{memberOf}</dd>
+          <dd className="mt-1 text-sm tabular-nums text-stoat-text">{memberOf}</dd>
         </div>
       </dl>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold text-zinc-900">User document</h2>
+        <h2 className="text-sm font-semibold text-stoat-text">User document</h2>
         <JsonBlock value={user} />
       </section>
       {account ? (
         <section className="space-y-2">
-          <h2 className="text-sm font-semibold text-zinc-900">Account document</h2>
+          <h2 className="text-sm font-semibold text-stoat-text">Account document</h2>
           <JsonBlock
             value={{
               ...account,

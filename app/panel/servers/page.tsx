@@ -17,8 +17,8 @@ export default async function ServersPage({
     <div className="space-y-6">
       <header className="space-y-3">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-900">Servers</h1>
-          <p className="mt-1 text-sm text-zinc-600">
+          <h1 className="text-2xl font-semibold text-stoat-text">Servers</h1>
+          <p className="mt-1 text-sm text-stoat-muted">
             {total.toLocaleString()} match{total === 1 ? "" : "es"}
           </p>
         </div>
@@ -29,9 +29,9 @@ export default async function ServersPage({
         />
       </header>
 
-      <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
+      <div className="overflow-hidden rounded-lg border border-white/10 bg-stoat-panel">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-zinc-200 bg-zinc-50 text-xs uppercase tracking-wide text-zinc-500">
+          <thead className="border-b border-white/10 bg-stoat-raised text-xs uppercase tracking-wide text-stoat-muted">
             <tr>
               <th className="px-4 py-3 font-medium">Name</th>
               <th className="px-4 py-3 font-medium">ID</th>
@@ -42,28 +42,28 @@ export default async function ServersPage({
           <tbody>
             {items.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-zinc-500">
+                <td colSpan={4} className="px-4 py-8 text-center text-stoat-muted">
                   No servers found.
                 </td>
               </tr>
             ) : (
               items.map((s) => (
-                <tr key={s._id} className="border-t border-zinc-100 hover:bg-zinc-50">
+                <tr key={s._id} className="border-t border-white/5 hover:bg-stoat-raised">
                   <td className="px-4 py-3">
                     <Link
                       href={`/panel/servers/${s._id}`}
-                      className="font-medium text-zinc-900 hover:underline"
+                      className="font-medium text-stoat-text hover:underline"
                     >
                       {s.name || "(unnamed)"}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-zinc-500">
+                  <td className="px-4 py-3 font-mono text-xs text-stoat-muted">
                     {shortId(s._id)}
                   </td>
-                  <td className="px-4 py-3 tabular-nums text-zinc-600">
+                  <td className="px-4 py-3 tabular-nums text-stoat-muted">
                     {s.channels?.length ?? 0}
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-zinc-500">
+                  <td className="px-4 py-3 font-mono text-xs text-stoat-muted">
                     {s.owner ? (
                       <Link
                         href={`/panel/users/${s.owner}`}
